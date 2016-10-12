@@ -1,5 +1,5 @@
-#include "Logging.h"
-#include "MdatExtractor.h"
+#include "utils/Logging.h"
+#include "Mdat/MdatExtractor.h"
 
 int main() {
     LOG(INFO, "Starting MDAT Extractor\n");

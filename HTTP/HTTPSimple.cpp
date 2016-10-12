@@ -5,7 +5,7 @@
  */
 
 #include "HTTPSimple.h"
-#include "Logging.h"
+#include "../utils/Logging.h"
 #include <memory>
 #include <stdlib.h>
 #include <sstream>
@@ -55,4 +55,16 @@ bool HTTPSimple::supportByteRange() const{
         return false;
     }
     return true;
+}
+
+bool HTTPSimple::receiveByteRange(const char * range, string & data){
+    if (this->m_request.has("Range")){
+        this->m_request.set("Range", range);
+    }
+    else {
+        this->m_request.add("Range", range);
+    }
+    this->m_session.sendRequest(this->m_request);
+    istream& rs = this->m_session.receiveResponse(this->m_response);
+    StreamCopier::copyToString(rs, data);
 }

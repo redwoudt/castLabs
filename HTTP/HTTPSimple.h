@@ -33,6 +33,7 @@ public:
     uint64_t getContentLength() const;
     void getContent(string& output) const;
     bool supportByteRange() const;
+    bool receiveByteRange(const char *, string &);
 private:
     HTTPClientSession m_session;
     HTTPRequest m_request;

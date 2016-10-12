@@ -6,18 +6,28 @@
 
 #include <iostream>
 #include <string>
-#include "HTTPSimple.h"
-#include "IsoBaseMediaFileParser.h"
-#include "Logging.h"
+#include <stdexcept>
+#include "../HTTP/HTTPSimple.h"
+#include "../IsoBaseMediaParser/IsoBaseMediaFileParser.h"
+#include "../IsoBaseMediaParser/IsoBaseMediaHTTPParser.h"
+#include "../utils/Logging.h"
 #include "MdatExtractor.h"
 
+using std::runtime_error;
 using std::string;
 
-static const uint64_t MAX_DOWNLOAD_SIZE_ALLOWED = 10000000; // bytes - value picked for demo purposes
+// TODO - make this an input parameter (to force one or the other way)
+static const uint64_t MAX_DOWNLOAD_SIZE_ALLOWED = 20000000; // bytes - value picked for demo purposes
 
 void operator<<(MdatExtractor& extractor, const char * pUri){
     LOG(DEBUG, "Starting MDAT Extractor\n");
-    extractor.processURI(pUri);
+    try{
+        extractor.processURI(pUri);
+    }
+    catch (runtime_error &e){
+        LOG(ERR, "Caught runtime expection: " << e.what() << "\n");
+    }
+
 }
 
 void MdatExtractor::processURI(const char * pUri){
@@ -37,18 +47,17 @@ void MdatExtractor::processURI(const char * pUri){
         string content;
         httpInterface.getContent(content);
         LOG(VERB, "content: \n" << content << "\n");
-        // next pass string reference into file parser and implement the file extract code in there
-        // initially do all in one, but then see if it can be broken up to smaller bits for both
-        // consider using and interface to implement different versions of parser ???
         IsoBaseMediaFileParser parser(content);
         parser.extractAllBlocks();
     }
     else {
+        // no use if byte range is not supported
         if (!byteRangeSupport){
-            // throw exception
+            LOG(ERR, "Content Length " << contentLength << " too long for singe download and byte range not supported\n");
+            throw runtime_error("Byte range not supported");
         }
-        // tomorrow put code here from doing multiple HTTP GETs to complete the task
-        // get moof details and download completely if not exceeding upper limit, leave rest for further implementation
-        // get mdat data in chunks if exceeding download size
+        // setup parser
+        IsoBaseMediaHTTPParser parser(httpInterface);
+        parser.extractAllBlocks();
     }
 }

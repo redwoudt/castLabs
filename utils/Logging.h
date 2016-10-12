@@ -24,7 +24,7 @@ enum DEBUG_LEVEL{
     VERB
 };
 
-#define _DEBUG_LEVEL_ VERB
+#define _DEBUG_LEVEL_ INFO
 
 #ifdef _DEBUG_LEVEL_
 #define LOG(level, ...) \

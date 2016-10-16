@@ -15,14 +15,15 @@
 
 using std::runtime_error;
 using std::string;
+using std::get;
 
 // TODO - make this an input parameter (to force one or the other way)
 static const uint64_t MAX_DOWNLOAD_SIZE_ALLOWED = 20000000; // bytes - value picked for demo purposes
 
-void operator<<(MdatExtractor& extractor, const char * pUri){
+void operator<<(MdatExtractor& extractor, sourceAndDestination srcAndDest){
     LOG(DEBUG, "Starting MDAT Extractor\n");
     try{
-        extractor.processURI(pUri);
+        extractor.processURI(srcAndDest);
     }
     catch (runtime_error &e){
         LOG(ERR, "Caught runtime expection: " << e.what() << "\n");
@@ -30,10 +31,11 @@ void operator<<(MdatExtractor& extractor, const char * pUri){
 
 }
 
-void MdatExtractor::processURI(const char * pUri){
+void MdatExtractor::processURI(sourceAndDestination srcAndDest){
+    const char * pUri = get<0>(srcAndDest);
     LOG(DEBUG, "processing " << pUri << "\n");
     // setup HTTP comms
-    HTTPSimple httpInterface(pUri);
+    HTTPSimple httpInterface((string(pUri)));
     httpInterface.setupHTTPRequest();
     // retrieve URI details
     httpInterface.sendRequest();
@@ -48,7 +50,7 @@ void MdatExtractor::processURI(const char * pUri){
         httpInterface.getContent(content);
         LOG(VERB, "content: \n" << content << "\n");
         IsoBaseMediaFileParser parser(content);
-        parser.extractAllBlocks();
+        parser.extractAllBlocks(get<1>(srcAndDest));
     }
     else {
         // no use if byte range is not supported
@@ -58,6 +60,6 @@ void MdatExtractor::processURI(const char * pUri){
         }
         // setup parser
         IsoBaseMediaHTTPParser parser(httpInterface);
-        parser.extractAllBlocks();
+        parser.extractAllBlocks(get<1>(srcAndDest));
     }
 }

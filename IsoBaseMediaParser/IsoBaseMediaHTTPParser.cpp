@@ -18,9 +18,9 @@ IsoBaseMediaHTTPParser::IsoBaseMediaHTTPParser(HTTPSimple& httpInterface): m_htt
 
 }
 
-void IsoBaseMediaHTTPParser::extractMdatBlock(const uint64_t& index){
+void IsoBaseMediaHTTPParser::extractMdatBlock(const uint64_t& index, const char * path){
     // get mdat block size
-    uint64_t blockSize = this->parseBlock(index, "mdat");
+    uint64_t blockSize = parseBlock(index, "mdat");
     if (blockSize == 0){
         LOG(ERR, "\"mdat\" block is not present \n");
         throw runtime_error("\"mdat\" block is not present");
@@ -29,13 +29,13 @@ void IsoBaseMediaHTTPParser::extractMdatBlock(const uint64_t& index){
     // loop through content chunk by chunk and print out
     uint64_t contentIndex = index + BOX_HEADER_SIZE;
     uint64_t upperIndex = index + blockSize - BOX_HEADER_SIZE;
-    this->displayHeadingOfBlockData("mdat");
+    displayHeadingOfBlockData("mdat");
     while (contentIndex < upperIndex){
         string chunkContent;
         uint64_t indexIncrease = min(CHUNK_SIZE, upperIndex-contentIndex);
         if (indexIncrease <= 0) break;
-        this->retrievePartialBoxContent(contentIndex, indexIncrease, chunkContent);
-        this->displayPartialBlockData(chunkContent);
+        retrievePartialBoxContent(contentIndex, indexIncrease, chunkContent);
+        displayPartialBlockData(chunkContent);
         contentIndex += indexIncrease;
     }
 }
@@ -43,8 +43,8 @@ void IsoBaseMediaHTTPParser::extractMdatBlock(const uint64_t& index){
 uint64_t IsoBaseMediaHTTPParser::retrieveBoxSize(const uint64_t& index) const{
     string size;
     string range;
-    this->constructRangeString(index, 3, range);
-    this->m_httpInterface.receiveByteRange(range.c_str(), size);
+    constructRangeString(index, 3, range);
+    m_httpInterface.receiveByteRange(range.c_str(), size);
     // extract length
     uint64_t boxSize = 0;
     for (int i = 0; i < size.length(); ++i) {
@@ -56,8 +56,8 @@ uint64_t IsoBaseMediaHTTPParser::retrieveBoxSize(const uint64_t& index) const{
 
 void IsoBaseMediaHTTPParser::retrieveBoxType(const uint64_t& index, string & boxType) const{
     string range;
-    this->constructRangeString(index, 3, range);
-    this->m_httpInterface.receiveByteRange(range.c_str(), boxType);
+    constructRangeString(index, 3, range);
+    m_httpInterface.receiveByteRange(range.c_str(), boxType);
     LOG(VERB, "Box type: " << boxType << "\n");
 }
 
@@ -71,8 +71,8 @@ void IsoBaseMediaHTTPParser::constructRangeString(const uint64_t& start, const u
 void IsoBaseMediaHTTPParser::retrievePartialBoxContent(const uint64_t& start, const uint64_t& end, string & content) const{
     string range;
     LOG(VERB, "Retrieve Box Content for (" << start << " to " << end << "\n");
-    this->constructRangeString(start, end, range);
-    this->m_httpInterface.receiveByteRange(range.c_str(), content);
+    constructRangeString(start, end, range);
+    m_httpInterface.receiveByteRange(range.c_str(), content);
 }
 
 void IsoBaseMediaHTTPParser::displayHeadingOfBlockData(const char * name) const{
@@ -81,4 +81,8 @@ void IsoBaseMediaHTTPParser::displayHeadingOfBlockData(const char * name) const{
 
 void IsoBaseMediaHTTPParser::displayPartialBlockData(const string & content) const{
     LOG(INFO, content << "\n");
+}
+
+void IsoBaseMediaHTTPParser::test(void){
+    //TODO
 }

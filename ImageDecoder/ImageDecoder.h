@@ -14,13 +14,37 @@
 
 using std::string;
 
+/** Extracts images from XML data.
+ */
+
 class ImageDecoder {
 public:
-    void extractImages(const string &, string &);
+    /**
+     *  Extract images from given string to given path
+     *  @param path path to extract images to
+     *  @param content content to extract from
+     */
+    void extractImages(const string & path, string & content);
 protected:
-    string base64_decode(string const&);
-    string base64_encode(unsigned char const*, unsigned int);
-    void write_to_file(unsigned char const*, string);
+    /**
+     *  Decode string to image
+     *  @param encoded_string string to decode
+     *  @return string containing decoded image
+     */
+    string base64_decode(string const& encoded_string);
+    /**
+     *  Encode image to string
+     *  @param bytes_to_encode string to encode
+     *  @param in_len length of content to encode
+     *  @return string containing encoded image
+     */
+    string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len);
+    /**
+     *  Write content to file
+     *  @param data data to write
+     *  @param path path to file
+     */
+    void write_to_file(unsigned char const* data, string path);
 };
 
 

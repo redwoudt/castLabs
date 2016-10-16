@@ -13,43 +13,61 @@
 #include <vector>
 #include <stack>
 
-using std::string;
-using std::istream;
-using namespace Poco::Net;
-
-HTTPSimple::HTTPSimple(const char * pUri){
+HTTPSimple::HTTPSimple(const string& pUri){
+    try{
+        HTTPStreamFactory::unregisterFactory();
+    }
+    catch (NotFoundException e){
+        LOG(VERB, "HTTPStreamFactory not registered\n");
+    }
     HTTPStreamFactory::registerFactory();
-    this->m_uri = URI(pUri);
+    m_uri = URI(pUri.c_str());
+}
+
+HTTPSimple::~HTTPSimple(void) {
+    try{
+        HTTPStreamFactory::unregisterFactory();
+    }
+    catch (NotFoundException e){
+        LOG(VERB, "HTTPStreamFactory not registered\n");
+    }
 }
 
 void HTTPSimple::setupHTTPRequest(){
-    std::string path(this->m_uri.getPathAndQuery());
+    std::string path(m_uri.getPathAndQuery());
     if (path.empty()) path = "/";
-    this->m_session.setHost(this->m_uri.getHost());
-    this->m_session.setPort(this->m_uri.getPort());
-    this->m_request.setMethod(HTTPRequest::HTTP_GET);
-    this->m_request.setURI(path);
-    this->m_request.setVersion(HTTPMessage::HTTP_1_1);
+    m_session.setHost(m_uri.getHost());
+    m_session.setPort(m_uri.getPort());
+    m_request.setMethod(HTTPRequest::HTTP_GET);
+    m_request.setURI(path);
+    m_request.setVersion(HTTPMessage::HTTP_1_1);
 }
 
 void HTTPSimple::sendRequest(){
-    this->m_session.sendRequest(this->m_request);
+    m_session.sendRequest(m_request);
 }
 
 void HTTPSimple::getContent(string& output) const{
-    StreamCopier::copyToString(*this->m_inputStream, output);
+    uint64_t contentLength = getContentLength();
+    if (contentLength > 0){
+        StreamCopier::copyToString(*m_inputStream, output);
+    }
 }
 
 void HTTPSimple::receiveResponse(){
-    this->m_inputStream = &this->m_session.receiveResponse(this->m_response);
+    m_inputStream = &m_session.receiveResponse(m_response);
 }
 
 uint64_t HTTPSimple::getContentLength() const{
-    return this->m_response.getContentLength64();
+    uint64_t contentLength = 0;
+    if (m_response.hasContentLength()){
+        contentLength = m_response.getContentLength64();
+    }
+    return contentLength;
 }
 
 bool HTTPSimple::supportByteRange() const{
-    string accept_range = this->m_response.get("Accept-Ranges");
+    string accept_range = m_response.get("Accept-Ranges");
     if (accept_range != "bytes"){
         LOG(WARN, "Byte Range not Supported\n");
         return false;
@@ -58,13 +76,14 @@ bool HTTPSimple::supportByteRange() const{
 }
 
 bool HTTPSimple::receiveByteRange(const char * range, string & data){
-    if (this->m_request.has("Range")){
-        this->m_request.set("Range", range);
+    if (m_request.has("Range")){
+        m_request.set("Range", range);
     }
     else {
-        this->m_request.add("Range", range);
+        m_request.add("Range", range);
     }
-    this->m_session.sendRequest(this->m_request);
-    istream& rs = this->m_session.receiveResponse(this->m_response);
-    StreamCopier::copyToString(rs, data);
+    m_session.sendRequest(m_request);
+    istream& rs = m_session.receiveResponse(m_response);
+    getContent(data);
+    return true;
 }

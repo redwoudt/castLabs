@@ -17,11 +17,11 @@ using std::endl;
 static const char * debug_string[] = {"ERROR", "WARNING", "INFO", "DEBUG", "VERBOSE"};
 
 enum DEBUG_LEVEL{
-    ERR,
-    WARN,
-    INFO,
-    DEBUG,
-    VERB
+    ERR,    // ERROR
+    WARN,   // WARNING
+    INFO,   // INFO
+    DEBUG,  // DEBUG
+    VERB    // VERBOSE
 };
 
 #define _DEBUG_LEVEL_ INFO
@@ -33,6 +33,10 @@ enum DEBUG_LEVEL{
             cout << "[LOG-" << debug_string[level] << "] [" << __FUNCTION__ << ":" << __LINE__ << "] ";\
             cout << __VA_ARGS__; \
         }
+
+// taken from http://stackoverflow.com/questions/2193544/how-to-print-additional-information-when-assert-fails
+#define ASSERT(condition) {if(!(condition)){ LOG(ERR, "ASSERT FAILED: " << #condition << endl); assert(0);}}
+
 #else
 #define LOG(...)
 #endif

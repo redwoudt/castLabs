@@ -19,22 +19,22 @@ IsoBaseMediaFileParser::IsoBaseMediaFileParser(string& content): m_content(conte
 }
 
 
-void IsoBaseMediaFileParser::extractMdatBlock(const uint64_t& index){
-    uint64_t blockSize = this->parseBlock(index, "mdat");
+void IsoBaseMediaFileParser::extractMdatBlock(const uint64_t& index, const char * path){
+    uint64_t blockSize = parseBlock(index, "mdat");
     if (blockSize == 0){
         LOG(ERR, "\"mdat\" block is not present \n");
         throw runtime_error("\"mdat\" block is not present");
     }
     string mdatContent;
-    this->retrieveBoxContent(index+BOX_HEADER_SIZE, blockSize-BOX_HEADER_SIZE, mdatContent);
-    this->displayBlockData("mdat", mdatContent);
+    retrieveBoxContent(index+BOX_HEADER_SIZE, blockSize-BOX_HEADER_SIZE, mdatContent);
+    displayBlockData("mdat", mdatContent);
 
     ImageDecoder imageExtractor;
-    imageExtractor.extractImages(string("/tmp/"), mdatContent);
+    imageExtractor.extractImages(string(path), mdatContent);
 }
 
 uint64_t IsoBaseMediaFileParser::retrieveBoxSize(const uint64_t& index) const{
-    string boxSizeStr = this->m_content.substr(index, BOX_HEADER_LENGTH_SIZE);
+    string boxSizeStr = m_content.substr(index, BOX_HEADER_LENGTH_SIZE);
     LOG(VERB, "Box Size String: " << boxSizeStr << "\n");
     // extract length
     uint64_t boxSize = 0;
@@ -47,15 +47,19 @@ uint64_t IsoBaseMediaFileParser::retrieveBoxSize(const uint64_t& index) const{
 }
 
 void IsoBaseMediaFileParser::retrieveBoxType(const uint64_t& index, string & boxType) const {
-    boxType = this->m_content.substr(index, BOX_HEADER_TYPE_SIZE);
+    boxType = m_content.substr(index, BOX_HEADER_TYPE_SIZE);
     LOG(VERB, "Box type: " << boxType << "\n");
 }
 
 void IsoBaseMediaFileParser::retrieveBoxContent(const uint64_t& index, const uint64_t& size, string & content) const{
-    content = this->m_content.substr(index, size);
+    content = m_content.substr(index, size);
     LOG(VERB, "Box Content: " << content << "\n");
 }
 
 void IsoBaseMediaFileParser::displayBlockData(const char * name, const string & content) const{
     LOG(INFO, "Content of " << name << " box is: " << content << "\n");
+}
+
+void IsoBaseMediaFileParser::test(void) {
+    //TODO 
 }

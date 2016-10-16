@@ -22,10 +22,10 @@ static map<const char *, block_list> ALLOWED_SUB_BLOCKS = { \
                                                           {"traf", {"tfhd", "trun", "uuid"}} \
                                                           };
 
-void IsoBaseMediaParser_Base::extractAllBlocks(){
+void IsoBaseMediaParser_Base::extractAllBlocks(const char * path){
     try{
-        uint64_t blockSize = this->extractMoofBlocks();
-        this->extractMdatBlock(blockSize);
+        uint64_t blockSize = extractMoofBlocks();
+        extractMdatBlock(blockSize, path);
     }
     catch (runtime_error &e){
         LOG(ERR, "Caught runtime expection: " << e.what() << "\n");
@@ -34,7 +34,7 @@ void IsoBaseMediaParser_Base::extractAllBlocks(){
 
 uint64_t IsoBaseMediaParser_Base::extractMoofBlocks(){
     // parse "moof" block
-    uint64_t blockSize = this->parseBlock(0, "moof");
+    uint64_t blockSize = parseBlock(0, "moof");
     if (blockSize == 0){
         LOG(ERR, "\"moof\" block is not present \n");
         throw runtime_error("\"moof\" block is not present");
@@ -46,15 +46,15 @@ uint64_t IsoBaseMediaParser_Base::extractMoofBlocks(){
 
 uint64_t IsoBaseMediaParser_Base::parseBlock(const uint64_t& index, const char * name){
     LOG(VERB, "parse block \"" << name << "\"\n");
-    uint64_t blockSize = this->retrieveBoxSize(index);
+    uint64_t blockSize = retrieveBoxSize(index);
     string blockType;
-    this->retrieveBoxType(index+BOX_HEADER_LENGTH_SIZE, blockType);
+    retrieveBoxType(index+BOX_HEADER_LENGTH_SIZE, blockType);
     if (blockType.compare(name) != 0){
         LOG(DEBUG, "Received \"" << blockType << "\", expected \"" << name << "\"\n");
         blockSize = 0;
     }
     else{
-        this->displayBoxFound(name, blockSize);
+        displayBoxFound(name, blockSize);
     }
     return blockSize;
 }

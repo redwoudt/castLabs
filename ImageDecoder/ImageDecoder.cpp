@@ -44,7 +44,7 @@ void ImageDecoder::extractImages(const string & path, string & content) {
         LOG(VERB, "Encoding: " << encoding << "\n");
         string data = item.first_child().value();
         LOG(VERB, "Data: " << data.data() << "\n");
-        this->write_to_file((unsigned char const*)data.c_str(), filename);
+        write_to_file((unsigned char const*)data.c_str(), filename);
     }
 }
 
@@ -138,7 +138,7 @@ string ImageDecoder::base64_decode(string const& encoded_string) {
 void ImageDecoder::write_to_file(unsigned char const* data, string path){
     std::ofstream fp;
     size_t count;
-    LOG(DEBUG, "writing to file " << path.c_str() << "\n");
+    LOG(INFO, "writing to file " << path.c_str() << "\n");
     fp.open(path.c_str(), std::ios_base::out | std::ios_base::binary);
     //convert data
     string str((char *)data);

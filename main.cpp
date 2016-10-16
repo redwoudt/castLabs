@@ -1,3 +1,4 @@
+#include <string.h>
 #include "utils/Logging.h"
 #include "Mdat/MdatExtractor.h"
 #include "Tests/UnitTests.h"
@@ -22,7 +23,7 @@ int main(int argc, char* argv[]) {
         LOG(ERR, "Usage: " << argv[0] << " requires destination to save images \n");
         return 1;
     }
-    if (!std::strcmp(argv[1], ".")){ // can make improve this in future
+    if (!strcmp(argv[1], ".")){ // can make improve this in future
         LOG(ERR, "Usage: " << argv[0] << " requires destination absolute path \n");
         return 1;
     }

@@ -1,22 +1,22 @@
 # castLabs
 ## Code Overview
 
-The doxygen documents are available within the documents folder. <br />
+The doxygen documents are available within the *documents* folder. <br />
 
-The code is executed from main.cpp to either:<br />
-1. run the general task, as per the assignment (calling runBasicCase())<br />
-2. run a set of unit tests (calling runTests())<br />
+The code is executed from *main.cpp* to either:<br />
+1. run the general task, as per the assignment (calling *runBasicCase()*)<br />
+2. run a set of unit tests (calling *runTests()*)<br />
 
-The code structure is grouped into different folders:<br />
-1. **HTTP** - contains class that provided a simple HTTP interface for making requests and receiving responses<br />
-  (this class is dependant on the POCO library being installed on the platform)<br />
+The code structure is grouped into the following folders:<br />
+1. **HTTP** - contains a class that provided a simple HTTP interface for making requests and receiving responses<br />
+  (this class is dependant upon the POCO library being installed on the platform)<br />
 2. **ImageDecoder** - class to decode and extract images from the XML content<br />
-3. **Interfaces** - contain interfaces (in future) or now just abstract class to be implemened by Iso Media File Parser Classes<br />
-4. **IsoBaseMediaParser** - contains 3 classes: a base class that defines the generic features and an local string and HTTP specific classes. In the case that the blocks become too big for local storage, then the HTTP specific class becomes important, as this allows for downloading the content in chunks. <br />
-5. **Mdat** - Interface into extracting block data from given URI <br />
-6. **pugixml** - containes external code for XML image decoding <br />
-7. **Tests** - unit tests <br />
-8. **utils** - containes all utils. for now just logging. <br />
+3. **Interfaces** - contains interfaces (in future), for now it just contains an abstract class to be implemened by Iso Media File Parser Classes<br />
+4. **IsoBaseMediaParser** - contains 3 classes: a base class that defines the generic features and local string and HTTP specific classes. In the case that the blocks become too big for local storage, then the HTTP specific class becomes important, as this allows for downloading the content in chunks. <br />
+5. **Mdat** - entry point for extracting block data from given URI. <br />
+6. **pugixml** - contains code for XML image decoding. <br />
+7. **Tests** - unit tests. <br />
+8. **utils** - contains all utils. for it just contains logging. <br />
 
 ## Example Run
 
@@ -70,24 +70,27 @@ iVBORw0KGgoAAAANSUhEUgAAAtAAAAHgCAYAAACMxVqsAAAQFUlEQVR4nO3dW3LbyAFAUTmVf69Bu5wd
 ```
 
 ## Testing
-- list platforms
-- list test cases
-- list further work to be done 
--- test all possible exceptions thrown
--- test different content strings with different box type sequences
--- test extract all from HTTP parser
--- test more platforms
+The code was tested on: <br />
+1. Mac OS X El Capitan Version 10.11.6 <br />
+2. Linux Mint 16 Cinnamon 64-bit <br />
+3. TBC - windows platform <br />
+
+The following tests should be completed later on: <br />
+1. Test simulating exceptions <br />
+2. Test different content strings, with different sequences of box types <br />
+3. Test on more platforms <br />
 
 ## Git Checkin Process
+The branch *FR_Mdat_Extractor* was created to do development in. The developed code was merged with *master* once completed. From the *master* branch a *release-1-0-0* branch was created for the official release.  
 
 ## Bonus Work
 ### Large MDAT Blocks
 ### Extracting Images from XML
-- explain how
-- image extraction in chunks are left for a later exercise
+For now, it is assumed that the whole mdat content is downloaded all at once. After extracting the mdat content into a string (*IsoBaseMediaFileParser::extractMdatBlock()*), the images are extracted within *ImageDecoder::extractImages()*. The file name is obtained from the *xml:id* attribute and the image type is obtained from the *imagetype* attribute. The actual encoded string is then extracted using *ImageDecoder* class.
 
 ## Future Work
-- complete testing
-- add image extraction in chunks are left for a later exercise
-- add uri source as input for program
-- 
+Future work include: <br />
+1. Complete testing. <br /> 
+2. Add image extraction in chunks. <br /> 
+3. Add support to input URI source to program. <br />
+4. Support multiple types of images. <br />

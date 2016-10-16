@@ -63,10 +63,10 @@ nameAndSize IsoBaseMediaParser_Base::parseSubBlocks(const uint64_t& index, const
     for (const char * name : allowed_names){
         uint64_t blockSize = parseBlock(index, name);
         if (blockSize != 0){
-            return {name, blockSize};
+            return std::make_tuple(name, blockSize);
         }
     }
-    return {nullptr, 0};
+    return std::make_tuple(nullptr, 0);
 }
 
 void IsoBaseMediaParser_Base::parseSubBlocks(const char * name, uint64_t index, const uint64_t& blockLength){
@@ -78,7 +78,7 @@ void IsoBaseMediaParser_Base::parseSubBlocks(const char * name, uint64_t index, 
             LOG(DEBUG, "Block \"" << name << "\" has no more subblocks" << "\n");
             break;
         }
-        subBlocks.push({get<0>(blockInfo), index+BOX_HEADER_SIZE, index+get<1>(blockInfo)});
+        subBlocks.push(std::make_tuple(get<0>(blockInfo), index+BOX_HEADER_SIZE, index+get<1>(blockInfo)));
         index += get<1>(blockInfo);
     }
 

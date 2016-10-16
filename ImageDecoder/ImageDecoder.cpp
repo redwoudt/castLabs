@@ -7,6 +7,7 @@
  * http://stackoverflow.com/questions/7711682/convert-server-response-stdstring-into-a-png-file
  */
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
@@ -37,7 +38,7 @@ void ImageDecoder::extractImages(const string & path, string & content) {
         filename.append(".");
         string extension = item.attribute("imagetype").value();
         // convert to lower case
-        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+        transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
         filename.append(extension);
         LOG(VERB, "Filename: " << filename << "\n");
         string encoding = item.attribute("encoding").value();

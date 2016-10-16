@@ -85,6 +85,8 @@ The branch *FR_Mdat_Extractor* was created to do development in. The developed c
 
 ## Bonus Work
 ### Large MDAT Blocks
+*CHUNK_SIZE* is defined within the code, which forces the content to be downloaded in chunks, if bigger than the allowed size. The chunk downloads are handled within *IsoBaseMediaHTTPParser*, using byte range HTTP requests. 
+
 ### Extracting Images from XML
 For now, it is assumed that the whole mdat content is downloaded all at once. After extracting the mdat content into a string (*IsoBaseMediaFileParser::extractMdatBlock()*), the images are extracted within *ImageDecoder::extractImages()*. The file name is obtained from the *xml:id* attribute and the image type is obtained from the *imagetype* attribute. The actual encoded string is then extracted using *ImageDecoder* class.
 

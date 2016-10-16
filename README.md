@@ -18,6 +18,27 @@ The code structure is grouped into the following folders:<br />
 7. **Tests** - unit tests. <br />
 8. **utils** - contains all utils. for it just contains logging. <br />
 
+## Build Setup
+### OSX
+from castLabs root directory:<br />
+1. create *build* directory (mkdir build); cd to build directory<br />
+2. *cmake ..*<br />
+(setup cmake)<br />
+3. *make MdatExtractor*<br />
+(run make specific to OSX platform)<br />
+4. *./MdatExtractor /tmp/*<br />
+(execute program)<br />
+
+### Linux
+from castLabs root directory:<br />
+1. create *build* directory (mkdir build); cd to build directory<br />
+2. *cmake ..*<br />
+(setup cmake)<br />
+3. *make MdatExtractor_Linux*<br />
+(run make specific to OSX platform)<br />
+4. *./MdatExtractor_Linux /tmp/*<br />
+(execute program)<br />
+
 ## Example Run
 
 ```

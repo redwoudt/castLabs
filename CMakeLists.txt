@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 2.8)
 project(MdatExtractor)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -32,4 +32,4 @@ target_include_directories(MdatExtractor_Linux PRIVATE "${POCO_INCLUDE_DIR}" pug
 
 # link the app against POCO
 target_link_libraries(MdatExtractor "${POCO_LIBS}")
-target_link_libraries(MdatExtractor_Linux "${POCO_LIBS}")
+target_link_libraries(MdatExtractor_Linux "${POCO_LIBS_LINUX}")
